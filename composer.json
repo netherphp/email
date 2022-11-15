@@ -22,7 +22,8 @@
 		}
 	},
 	"require": {
-		"php": "^8.1"
+		"php": "^8.1",
+		"sendgrid/sendgrid": "^8"
 	},
 	"require-dev": {
 		"netherphp/standards": ">=0.1.9",
