@@ -1,7 +1,7 @@
 {
-	"name": "netherphp/empty",
-	"description": "An empty library.",
-	"keywords": [ "php", "empty" ],
+	"name": "netherphp/email",
+	"description": "An email library.",
+	"keywords": [ "php", "email", "sendgrid" ],
 	"license": "BSD-2-Clause",
 	"authors":[
 		{
