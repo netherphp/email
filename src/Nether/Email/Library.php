@@ -10,7 +10,7 @@ extends Nether\Common\Library {
 
 	const
 	ConfOutboundFrom    = 'Nether.Email.Outbound.From',
-	ConfOutboundName    = 'Nether.Email.Outbound.Name',
+	ConfOutboundReplyTo = 'Nether.Email.Outbound.ReplyTo',
 	ConfOutboundSubject = 'Nether.Email.Outbound.Subject',
 	ConfSendGridKey     = 'Nether.Email.SendGrid.Key';
 
@@ -27,8 +27,9 @@ extends Nether\Common\Library {
 	Datastore {
 
 		$Config->BlendRight([
-			self::ConfOutboundFrom => 'info@localhost',
-			self::ConfOutboundName => 'Info'
+			self::ConfOutboundFrom    => 'info@localhost',
+			self::ConfOutboundReplyTo => 'info@localhost',
+			self::ConfOutboundSubject => 'Contact from Website'
 		]);
 
 		return static::$Config;

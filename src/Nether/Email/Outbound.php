@@ -4,6 +4,7 @@ namespace Nether\Email;
 use Nether;
 use SendGrid;
 
+use Exception;
 use Nether\Email\Library;
 use Nether\Object\Datastore;
 use Nether\Object\Prototype;
@@ -16,7 +17,7 @@ extends Prototype {
 	$From;
 
 	public string
-	$Name;
+	$ReplyTo;
 
 	public string
 	$Subject;
@@ -40,7 +41,7 @@ extends Prototype {
 	void {
 
 		$this->From = Library::Get(Library::ConfOutboundFrom);
-		$this->Name = Library::Get(Library::ConfOutboundName);
+		$this->ReplyTo = Library::Get(Library::ConfOutboundReplyTo);
 		$this->Subject = (
 			Library::Get(Library::ConfOutboundSubject)
 			?? 'Outbound Message'
@@ -53,7 +54,7 @@ extends Prototype {
 	////////////////////////////////////////////////////////////////
 
 	public function
-	Render(string $Area='outbound', array $Scope=[]):
+	Render(string $Area='email/outbound', array $Scope=[]):
 	string {
 
 		$Generator = new Nether\Surface\Engine(
@@ -67,6 +68,8 @@ extends Prototype {
 			$Scope
 		);
 
+		unset($Generator);
+
 		return $this->Content;
 	}
 
@@ -75,28 +78,45 @@ extends Prototype {
 
 	public function
 	Send():
-	int {
+	static {
 
+		$Email = NULL;
 		$Sent = 0;
 		$To = NULL;
+		$Error = NULL;
+		$Key = NULL;
 
-		foreach($this->To as $To) {
+		////////
 
-			$Send = new SendGrid\Mail\Mail;
-			$Send->SetFrom($this->App->Config['Contact.From'], $this->App->Config['Contact.FromName']);
-			$Send->SetSubject($this->App->Config['Contact.Subject']);
-			$Send->SetReplyTo($Email, $Name);
-			$Send->AddTo($this->App->Config['Contact.To'], $this->App->Config['Contact.ToName']);
-			$Send->AddContent('text/html', $Content);
-			$SendGrid = new SendGrid($this->App->Config['SendGrid.Key']);
+		$Email = new SendGrid\Mail\Mail;
+		$Email->SetFrom($this->From);
+		$Email->SetReplyTo($this->ReplyTo);
+		$Email->SetSubject($this->Subject);
+		$Email->AddContent('text/html', $this->Content);
 
-			try { $Sent = $SendGrid->Send($Send); }
-			catch (Exception $E) { }
-
+		foreach($this->To as $Key => $To) {
+			$Email->AddTo($To);
 			$Sent += 1;
 		}
 
-		return $Sent;
+		foreach($this->BCC as $Key => $To) {
+			$Email->AddBCC($To);
+			$Sent += 1;
+		}
+
+		////////
+
+		$SendGrid = new SendGrid(Library::Get(Library::ConfSendGridKey));
+
+		try { $Sent = $SendGrid->Send($Email); }
+
+		catch(Exception $Error) {
+			//var_dump($Error);
+		}
+
+		////////
+
+		return $this;
 	}
 
 }
