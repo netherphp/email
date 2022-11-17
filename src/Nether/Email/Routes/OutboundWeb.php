@@ -3,11 +3,11 @@
 namespace Nether\Email\Routes;
 use Nether;
 
-use Nether\Atlantis\Routes\Web;
+use Nether\Atlantis\Routes\PublicWeb;
 use Nether\Avenue\Meta\RouteHandler;
 
 class OutboundWeb
-extends Web {
+extends PublicWeb {
 
 	#[RouteHandler('/contact')]
 	public function
