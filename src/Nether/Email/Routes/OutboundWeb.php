@@ -3,7 +3,7 @@
 namespace Nether\Email\Routes;
 use Nether;
 
-use Nether\Atlantis\Routes\PublicWeb;
+use Nether\Atlantis\PublicWeb;
 use Nether\Avenue\Meta\RouteHandler;
 
 class OutboundWeb

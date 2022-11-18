@@ -17,6 +17,9 @@ extends Prototype {
 	$From;
 
 	public string
+	$Name;
+
+	public string
 	$ReplyTo;
 
 	public string
@@ -41,6 +44,7 @@ extends Prototype {
 	void {
 
 		$this->From = Library::Get(Library::ConfOutboundFrom);
+		$this->Name = Library::Get(Library::ConfOutboundName);
 		$this->ReplyTo = Library::Get(Library::ConfOutboundReplyTo);
 		$this->Subject = (
 			Library::Get(Library::ConfOutboundSubject)
@@ -89,7 +93,7 @@ extends Prototype {
 		////////
 
 		$Email = new SendGrid\Mail\Mail;
-		$Email->SetFrom($this->From);
+		$Email->SetFrom($this->From, $this->Name);
 		$Email->SetReplyTo($this->ReplyTo);
 		$Email->SetSubject($this->Subject);
 		$Email->AddContent('text/html', $this->Content);

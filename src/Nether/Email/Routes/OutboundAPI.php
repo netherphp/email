@@ -3,11 +3,11 @@
 namespace Nether\Email\Routes;
 use Nether;
 
-use Nether\Atlantis\Routes\Api;
+use Nether\Atlantis\PublicAPI;
 use Nether\Avenue\Meta\RouteHandler;
 
 class OutboundAPI
-extends Api {
+extends PublicAPI {
 
 	#[RouteHandler('/api/outbound/send', Verb: 'POST')]
 	public function
