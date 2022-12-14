@@ -15,46 +15,39 @@ extends Nether\Common\Library {
 	ConfOutboundSubject = 'Nether.Email.Outbound.Subject',
 	ConfSendGridKey     = 'Nether.Email.SendGrid.Key';
 
-	static public function
-	Init(...$Argv):
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	public function
+	OnLoad(...$Argv):
 	void {
 
-		static::OnInit(...$Argv);
-		return;
-	}
-
-	static public function
-	InitDefaultConfig(?Datastore $Config = NULL):
-	Datastore {
-
-		$Config->BlendRight([
+		static::$Config->BlendRight([
 			self::ConfOutboundFrom    => 'info@localhost',
 			self::ConfOutboundName    => 'Info',
 			self::ConfOutboundReplyTo => 'info@localhost',
 			self::ConfOutboundSubject => 'Contact from Website'
 		]);
 
-		return static::$Config;
+		return;
 	}
 
-	////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////
-
-	static public function
-	OnInit(Datastore $Config, ...$Argv):
+	public function
+	OnPrepare(...$Argv):
 	void {
-
-		static::InitDefaultConfig($Config);
 
 		if(isset($Argv['App']) && is_object($Argv['App']))
 		if(method_exists($Argv['App'], 'GetProjectEnv'))
 		if($Argv['App'] instanceof Nether\Atlantis\Engine)
-		static::RegisterWithAtlantis($Argv['App']);
+		$this->RegisterWithAtlantis($Argv['App']);
 
 		return;
 	}
 
-	static protected function
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	protected function
 	RegisterWithAtlantis(Nether\Atlantis\Engine $App):
 	void {
 
