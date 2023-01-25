@@ -6,9 +6,9 @@ use SendGrid;
 
 use Exception;
 use Nether\Email\Library;
-use Nether\Object\Datastore;
-use Nether\Object\Prototype;
-use Nether\Object\Prototype\ConstructArgs;
+use Nether\Common\Datastore;
+use Nether\Common\Prototype;
+use Nether\Common\Prototype\ConstructArgs;
 
 class Outbound
 extends Prototype {
@@ -28,11 +28,11 @@ extends Prototype {
 	public string
 	$Content;
 
-	#[Nether\Object\Meta\PropertyObjectify]
+	#[Nether\Common\Meta\PropertyObjectify]
 	public Datastore
 	$To;
 
-	#[Nether\Object\Meta\PropertyObjectify]
+	#[Nether\Common\Meta\PropertyObjectify]
 	public Datastore
 	$BCC;
 

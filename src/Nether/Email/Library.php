@@ -3,7 +3,7 @@
 namespace Nether\Email;
 use Nether;
 
-use Nether\Object\Datastore;
+use Nether\Common\Datastore;
 
 class Library
 extends Nether\Common\Library {
@@ -61,7 +61,7 @@ extends Nether\Common\Library {
 			////////
 
 			$Map['Verbs']->Each(
-				fn(Nether\Object\Datastore $Handlers)
+				fn(Nether\Common\Datastore $Handlers)
 				=> $App->Router->AddHandlers($Handlers)
 			);
 
