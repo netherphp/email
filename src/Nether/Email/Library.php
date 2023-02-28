@@ -19,6 +19,7 @@ extends Nether\Common\Library {
 	ConfOutboundName      = 'Nether.Email.Outbound.Name',
 	ConfOutboundReplyTo   = 'Nether.Email.Outbound.ReplyTo',
 	ConfOutboundSubject   = 'Nether.Email.Outbound.Subject',
+	ConfOutboundVia       = 'Nether.Email.Outbound.Via',
 	ConfSendGridKey       = 'Nether.Email.SendGrid.Key',
 	ConfMailjetPublicKey  = 'Nether.Email.Mailjet.PublicKey',
 	ConfMailjetPrivateKey = 'Nether.Email.Mailjet.PrivateKey';

@@ -8,7 +8,6 @@ use Nether\Common;
 use Nether\Surface;
 
 use Exception;
-use LibXMLError;
 
 class Outbound
 extends Common\Prototype {
@@ -36,6 +35,9 @@ extends Common\Prototype {
 	public string
 	$Content;
 
+	public int
+	$Via = 0;
+
 	#[Common\Meta\PropertyObjectify]
 	public Common\Datastore
 	$To;
@@ -51,6 +53,7 @@ extends Common\Prototype {
 	OnReady(Common\Prototype\ConstructArgs $Argv):
 	void {
 
+		$this->Via = Library::Get(Library::ConfOutboundVia);
 		$this->From = Library::Get(Library::ConfOutboundFrom);
 		$this->Name = Library::Get(Library::ConfOutboundName);
 		$this->ReplyTo = Library::Get(Library::ConfOutboundReplyTo);
@@ -89,10 +92,29 @@ extends Common\Prototype {
 	////////////////////////////////////////////////////////////////
 
 	public function
-	Send():
+	Send(?int $Via=NULL):
 	void {
 
-		$this->SendViaSendGrid();
+		$Via ??= $this->Via;
+
+		switch($Via) {
+			case static::ViaSMTP: {
+				throw new Exception('todo: genkgo/mail maybe');
+				break;
+			}
+			case static::ViaSendGrid: {
+				$this->SendViaSendGrid();
+				break;
+			}
+			case static::ViaMailjet: {
+				$this->SendViaMailjet();
+				break;
+			}
+			default: {
+				throw new Exception('no OutboundVia configured');
+				break;
+			}
+		}
 
 		return;
 	}
@@ -101,11 +123,10 @@ extends Common\Prototype {
 	SendViaSendGrid():
 	void {
 
+		$Client = NULL;
 		$Email = NULL;
-		$Sent = 0;
+		$Result = NULL;
 		$To = NULL;
-		$Error = NULL;
-		$Key = NULL;
 
 		////////
 
@@ -115,21 +136,19 @@ extends Common\Prototype {
 		$Email->SetSubject($this->Subject);
 		$Email->AddContent('text/html', $this->Content);
 
-		foreach($this->To as $Key => $To) {
-			$Email->AddTo($To);
-			$Sent += 1;
-		}
+		foreach($this->To as $To)
+		$Email->AddTo($To);
 
-		foreach($this->BCC as $Key => $To) {
-			$Email->AddBCC($To);
-			$Sent += 1;
-		}
+		foreach($this->BCC as $To)
+		$Email->AddBCC($To);
 
 		////////
 
-		$SendGrid = new SendGrid(Library::Get(Library::ConfSendGridKey));
+		$Client = new SendGrid(Library::Get(Library::ConfSendGridKey));
 
-		try { $Sent = $SendGrid->Send($Email); }
+		try {
+			$Result = $Client->Send($Email);
+		}
 
 		catch(Exception $Error) {
 			//var_dump($Error);
@@ -144,40 +163,50 @@ extends Common\Prototype {
 	SendViaMailjet():
 	void {
 
-		$Key = NULL;
-		$To = NULL;
 		$Client = NULL;
+		$Result = NULL;
 		$Message = NULL;
 		$Body = NULL;
+		$To = NULL;
 
 		////////
 
 		$Client = new Mailjet\Client(
 			Library::Get(Library::ConfMailjetPublicKey),
-			Library::Get(Library::ConfMailjetPrivateKey)
+			Library::Get(Library::ConfMailjetPrivateKey),
+			TRUE,
+			[ 'version' => 'v3.1' ]
 		);
 
 		$Message = [
-			'From' => [ 'Email'=> $this->From, 'Name'=> $this->Name ],
-			'To' => [ ],
-			'BCC' => [ ],
-			'Subject' => $this->Subject,
-			'HTMLPart' => $this->Content
+			'From'        => [ 'Email'=> $this->From, 'Name'=> $this->Name ],
+			'ReplyTo'     => [ 'Email'=> $this->ReplyTo ],
+			'To'          => [ ],
+			'BCC'         => [ ],
+			'Subject'     => $this->Subject,
+			'HTMLPart'    => $this->Content,
+			'TrackOpens'  => 'disabled',
+			'TrackClicks' => 'disabled'
 		];
 
 		////////
 
 		foreach($this->To as $To)
-		$Message['To'][] = $To;
+		$Message['To'][] = [ 'Email'=> $To ];
 
 		foreach($this->BCC as $To)
-		$Message['BCC'][] = $To;
+		$Message['Bcc'][] = [ 'Email'=> $To ];
 
 		////////
 
 		$Body = [ 'Messages'=> [ $Message ] ];
 
-		try { $Result = $Client->Post(Mailjet\Resources::$Email, [ 'body'=> $Body ]); }
+		try {
+			$Result = $Client->Post(
+				Mailjet\Resources::$Email,
+				[ 'body' => $Body ]
+			);
+		}
 
 		catch(Exception $Error) {
 			//var_dump($Error);
