@@ -3,17 +3,25 @@
 namespace Nether\Email;
 use Nether;
 
-use Nether\Common\Datastore;
+/*******************************************************************************
+********************************************************************************
+
+
+
+********************************************************************************
+*******************************************************************************/
 
 class Library
 extends Nether\Common\Library {
 
 	const
-	ConfOutboundFrom    = 'Nether.Email.Outbound.From',
-	ConfOutboundName    = 'Nether.Email.Outbound.Name',
-	ConfOutboundReplyTo = 'Nether.Email.Outbound.ReplyTo',
-	ConfOutboundSubject = 'Nether.Email.Outbound.Subject',
-	ConfSendGridKey     = 'Nether.Email.SendGrid.Key';
+	ConfOutboundFrom      = 'Nether.Email.Outbound.From',
+	ConfOutboundName      = 'Nether.Email.Outbound.Name',
+	ConfOutboundReplyTo   = 'Nether.Email.Outbound.ReplyTo',
+	ConfOutboundSubject   = 'Nether.Email.Outbound.Subject',
+	ConfSendGridKey       = 'Nether.Email.SendGrid.Key',
+	ConfMailjetPublicKey  = 'Nether.Email.Mailjet.PublicKey',
+	ConfMailjetPrivateKey = 'Nether.Email.Mailjet.PrivateKey';
 
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////

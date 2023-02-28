@@ -1,17 +1,25 @@
 <?php
 
 namespace Nether\Email;
-use Nether;
+
 use SendGrid;
+use Mailjet;
+use Nether\Common;
+use Nether\Surface;
 
 use Exception;
-use Nether\Email\Library;
-use Nether\Common\Datastore;
-use Nether\Common\Prototype;
-use Nether\Common\Prototype\ConstructArgs;
+use LibXMLError;
 
 class Outbound
-extends Prototype {
+extends Common\Prototype {
+
+	const
+	ViaSMTP     = 1,
+	ViaSendGrid = 2,
+	ViaMailjet  = 3;
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
 
 	public string
 	$From;
@@ -28,19 +36,19 @@ extends Prototype {
 	public string
 	$Content;
 
-	#[Nether\Common\Meta\PropertyObjectify]
-	public Datastore
+	#[Common\Meta\PropertyObjectify]
+	public Common\Datastore
 	$To;
 
-	#[Nether\Common\Meta\PropertyObjectify]
-	public Datastore
+	#[Common\Meta\PropertyObjectify]
+	public Common\Datastore
 	$BCC;
 
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
 
 	protected function
-	OnReady(ConstructArgs $Argv):
+	OnReady(Common\Prototype\ConstructArgs $Argv):
 	void {
 
 		$this->From = Library::Get(Library::ConfOutboundFrom);
@@ -61,8 +69,8 @@ extends Prototype {
 	Render(string $Area='email/outbound', array $Scope=[]):
 	string {
 
-		$Generator = new Nether\Surface\Engine(
-			Nether\Surface\Library::$Config
+		$Generator = new Surface\Engine(
+			Surface\Library::$Config
 		);
 
 		$Generator->Themes = [ 'email' ];
@@ -82,7 +90,16 @@ extends Prototype {
 
 	public function
 	Send():
-	static {
+	void {
+
+		$this->SendViaSendGrid();
+
+		return;
+	}
+
+	public function
+	SendViaSendGrid():
+	void {
 
 		$Email = NULL;
 		$Sent = 0;
@@ -120,7 +137,53 @@ extends Prototype {
 
 		////////
 
-		return $this;
+		return;
+	}
+
+	public function
+	SendViaMailjet():
+	void {
+
+		$Key = NULL;
+		$To = NULL;
+		$Client = NULL;
+		$Message = NULL;
+		$Body = NULL;
+
+		////////
+
+		$Client = new Mailjet\Client(
+			Library::Get(Library::ConfMailjetPublicKey),
+			Library::Get(Library::ConfMailjetPrivateKey)
+		);
+
+		$Message = [
+			'From' => [ 'Email'=> $this->From, 'Name'=> $this->Name ],
+			'To' => [ ],
+			'BCC' => [ ],
+			'Subject' => $this->Subject,
+			'HTMLPart' => $this->Content
+		];
+
+		////////
+
+		foreach($this->To as $To)
+		$Message['To'][] = $To;
+
+		foreach($this->BCC as $To)
+		$Message['BCC'][] = $To;
+
+		////////
+
+		$Body = [ 'Messages'=> [ $Message ] ];
+
+		try { $Result = $Client->Post(Mailjet\Resources::$Email, [ 'body'=> $Body ]); }
+
+		catch(Exception $Error) {
+			//var_dump($Error);
+		}
+
+		return;
 	}
 
 }
