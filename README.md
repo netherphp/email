@@ -25,8 +25,9 @@ use Nether\Email;
 ->Set(Email\Library::ConfServerPassword, 'SMTP_PASSWORD')
 ->Set(Email\Library::ConfOutboundVia, OUTBOUND_VIA_CONST_INT)
 ->Set(Email\Library::ConfOutboundReplyTo, 'EMAIL_ADDRESS')
-->Set(Email\Library::ConfOutboundFrom, 'EMAIL_ADDRESSS')
-->Set(Email\Library::ConfOutboundName, 'EMAIL_FRIENDLY_NAME');
+->Set(Email\Library::ConfOutboundFrom, 'EMAIL_ADDRESS')
+->Set(Email\Library::ConfOutboundName, 'EMAIL_FRIENDLY_NAME')
+->Set(Email\Library::ConfOutboundSubject, 'EMAIL_DEFAULT_SUBJECTLINE');
 
 // Email\Outbound::ViaSMTP     = 1
 // Email\Outbound::ViaSendGrid = 2
