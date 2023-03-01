@@ -22,7 +22,11 @@ extends Nether\Common\Library {
 	ConfOutboundVia       = 'Nether.Email.Outbound.Via',
 	ConfSendGridKey       = 'Nether.Email.SendGrid.Key',
 	ConfMailjetPublicKey  = 'Nether.Email.Mailjet.PublicKey',
-	ConfMailjetPrivateKey = 'Nether.Email.Mailjet.PrivateKey';
+	ConfMailjetPrivateKey = 'Nether.Email.Mailjet.PrivateKey',
+	ConfServerHost        = 'Nether.Email.SMTP.Host',
+	ConfServerPort        = 'Nether.Email.SMTP.Port',
+	ConfServerUsername    = 'Nether.Email.SMTP.Username',
+	ConfServerPassword    = 'Nether.Email.SMTP.Password';
 
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////

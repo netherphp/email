@@ -26,7 +26,8 @@
 		"netherphp/common": "^5.0.5",
 		"sendgrid/sendgrid": "^8.0.1",
 		"google/recaptcha": "^1.2.4",
-		"mailjet/mailjet-apiv3-php": "^1.5"
+		"mailjet/mailjet-apiv3-php": "^1.5",
+		"phpmailer/phpmailer": "^6.7"
 	},
 	"require-dev": {
 		"netherphp/standards": ">=0.2.8",

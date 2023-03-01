@@ -4,10 +4,12 @@ namespace Nether\Email;
 
 use SendGrid;
 use Mailjet;
+use PHPMailer;
 use Nether\Common;
 use Nether\Surface;
 
 use Exception;
+use LibXMLError;
 
 class Outbound
 extends Common\Prototype {
@@ -99,7 +101,7 @@ extends Common\Prototype {
 
 		switch($Via) {
 			case static::ViaSMTP: {
-				throw new Exception('todo: genkgo/mail maybe');
+				$this->SendViaSMTP();
 				break;
 			}
 			case static::ViaSendGrid: {
@@ -207,6 +209,60 @@ extends Common\Prototype {
 				[ 'body' => $Body ]
 			);
 		}
+
+		catch(Exception $Error) {
+			//var_dump($Error);
+		}
+
+		return;
+	}
+
+	public function
+	SendViaSMTP():
+	void {
+
+		$Client = NULL;
+		$To = NULL;
+
+		////////
+
+		$Client = new PHPMailer\PHPMailer\PHPMailer(TRUE);
+		$Client->IsSMTP(TRUE);
+		$Client->CharSet = $Client::CHARSET_UTF8;
+		$Client->SMTPSecure = $Client::ENCRYPTION_STARTTLS;
+		$Client->SMTPAuth = TRUE;
+		$Client->SMTPDebug = PHPMailer\PHPMailer\SMTP::DEBUG_OFF;
+
+		$Client->Host = Library::Get(Library::ConfServerHost);
+		$Client->Port = Library::Get(Library::ConfServerPort);
+		$Client->Username = Library::Get(Library::ConfServerUsername);
+		$Client->Password = Library::Get(Library::ConfServerPassword);
+
+		$Client->SetFrom(
+			Library::Get(Library::ConfOutboundFrom),
+			Library::Get(Library::ConfOutboundName)
+		);
+
+		$Client->AddReplyTo(
+			Library::Get(Library::ConfOutboundReplyTo),
+			Library::Get(Library::ConfOutboundName)
+		);
+
+		////////
+
+		$Client->Subject = $this->Subject;
+		$Client->Body = $this->Content;
+		$Client->IsHTML(TRUE);
+
+		foreach($this->To as $To)
+		$Client->AddAddress($To);
+
+		foreach($this->BCC as $To)
+		$Client->AddBCC($To);
+
+		////////
+
+		try { $Client->Send(); }
 
 		catch(Exception $Error) {
 			//var_dump($Error);
