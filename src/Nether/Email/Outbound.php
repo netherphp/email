@@ -9,7 +9,6 @@ use Nether\Common;
 use Nether\Surface;
 
 use Exception;
-use LibXMLError;
 
 class Outbound
 extends Common\Prototype {
@@ -18,6 +17,13 @@ extends Common\Prototype {
 	ViaSMTP     = 1,
 	ViaSendGrid = 2,
 	ViaMailjet  = 3;
+
+	const
+	ViaNames = [
+		self::ViaSMTP     => 'SMTP Server',
+		self::ViaSendGrid => 'SendGrid',
+		self::ViaMailjet  => 'Mailjet'
+	];
 
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
@@ -120,6 +126,9 @@ extends Common\Prototype {
 
 		return;
 	}
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
 
 	public function
 	SendViaSendGrid():
@@ -269,6 +278,19 @@ extends Common\Prototype {
 		}
 
 		return;
+	}
+
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	static public function
+	GetViaName(int $Via):
+	string {
+
+		if(!array_key_exists($Via, static::ViaNames))
+		throw new Exception('Invalid Outbound Via');
+
+		return static::ViaNames[$Via];
 	}
 
 }

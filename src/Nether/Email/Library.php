@@ -87,4 +87,41 @@ extends Nether\Common\Library {
 		return;
 	}
 
+	////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////
+
+	static public function
+	IsConfiguredSMTP():
+	bool {
+
+		return (
+			TRUE
+			&& static::Has(static::ConfServerHost)
+			&& static::Has(static::ConfServerPort)
+			&& static::Has(static::ConfServerUsername)
+			&& static::Has(static::ConfServerPassword)
+		);
+	}
+
+	static public function
+	IsConfiguredSendGrid():
+	bool {
+
+		return (
+			TRUE
+			&& static::Has(static::ConfSendGridKey)
+		);
+	}
+
+	static public function
+	IsConfiguredMailjet():
+	bool {
+
+		return (
+			TRUE
+			&& static::Has(static::ConfMailjetPublicKey)
+			&& static::Has(static::ConfMailjetPrivateKey)
+		);
+	}
+
 }
