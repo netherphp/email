@@ -10,7 +10,28 @@ partnership with SendGrid that they totally are pretending isn't a circle jerk.
 * Mailjet (you can get 200/day for free, reset unknown their dash is meh.)
 * An SMTP server.
 
---------
+## Configuration
+
+```php
+use Nether\Email;
+
+($Config)
+->Set(Email\Library::ConfSendGridKey, 'SENDGRID_API_KEY')
+->Set(Email\Library::ConfMailjetPublicKey, 'MAILJET_PUB_KEY')
+->Set(Email\Library::ConfMailjetPrivateKey, 'MAILJET_PRIV_KEY')
+->Set(Email\Library::ConfServerHost, 'SMTP_HOSTNAME')
+->Set(Email\Library::ConfServerPort, SMTP_PORT_NUM)
+->Set(Email\Library::ConfServerUsername, 'SMTP_USERNAME')
+->Set(Email\Library::ConfServerPassword, 'SMTP_PASSWORD')
+->Set(Email\Library::ConfOutboundVia, OUTBOUND_VIA_CONST_INT)
+->Set(Email\Library::ConfOutboundReplyTo, 'EMAIL_ADDRESS')
+->Set(Email\Library::ConfOutboundFrom, 'EMAIL_ADDRESSS')
+->Set(Email\Library::ConfOutboundName, 'EMAIL_FRIENDLY_NAME');
+
+// Email\Outbound::ViaSMTP     = 1
+// Email\Outbound::ViaSendGrid = 2
+// Email\Outbound::ViaMailjet  = 3
+```
 
 ## SMTP Gotchas
 
