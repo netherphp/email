@@ -26,7 +26,9 @@ extends Nether\Common\Library {
 	ConfServerHost        = 'Nether.Email.SMTP.Host',
 	ConfServerPort        = 'Nether.Email.SMTP.Port',
 	ConfServerUsername    = 'Nether.Email.SMTP.Username',
-	ConfServerPassword    = 'Nether.Email.SMTP.Password';
+	ConfServerPassword    = 'Nether.Email.SMTP.Password',
+	ConfLogName           = 'Nether.Email.LogName',
+	ConfLogFile           = 'Nether.Email.LogFile';
 
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
@@ -39,7 +41,9 @@ extends Nether\Common\Library {
 			self::ConfOutboundFrom    => 'info@localhost',
 			self::ConfOutboundName    => 'Info',
 			self::ConfOutboundReplyTo => 'info@localhost',
-			self::ConfOutboundSubject => 'Contact from Website'
+			self::ConfOutboundSubject => 'Contact from Website',
+			self::ConfLogName         => 'Email',
+			self::ConfLogFile         => 'logs/{Y}/{M}/email.log'
 		]);
 
 		return;

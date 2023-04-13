@@ -5,18 +5,20 @@ namespace Nether\Email;
 use SendGrid;
 use Mailjet;
 use PHPMailer;
+
 use Nether\Common;
 use Nether\Surface;
 
 use Exception;
+use LibXMLError;
 
 class Outbound
 extends Common\Prototype {
 
 	const
-	ViaSMTP     = 1,
-	ViaSendGrid = 2,
-	ViaMailjet  = 3;
+	ViaSMTP     = 'smtp',
+	ViaSendGrid = 'sendgrid',
+	ViaMailjet  = 'mailjet';
 
 	const
 	ViaNames = [
@@ -43,8 +45,8 @@ extends Common\Prototype {
 	public string
 	$Content;
 
-	public int
-	$Via = 0;
+	public ?string
+	$Via = NULL;
 
 	#[Common\Meta\PropertyObjectify]
 	public Common\Datastore
@@ -53,6 +55,11 @@ extends Common\Prototype {
 	#[Common\Meta\PropertyObjectify]
 	public Common\Datastore
 	$BCC;
+
+	////////
+
+	public ?Common\Logs\File
+	$Log = NULL;
 
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
@@ -70,6 +77,12 @@ extends Common\Prototype {
 			?? 'Outbound Message'
 		);
 
+		if(Library::Has(Library::ConfLogFile))
+		$this->Log = new Common\Logs\File(
+			Library::Get(Library::ConfLogName),
+			Library::Get(Library::ConfLogFile)
+		);
+
 		return;
 	}
 
@@ -84,7 +97,7 @@ extends Common\Prototype {
 			Surface\Library::$Config
 		);
 
-		$Generator->Themes = [ 'email' ];
+		array_unshift($Generator->Themes, 'email');
 
 		$this->Content = $Generator->GetArea(
 			$Area,
@@ -100,7 +113,7 @@ extends Common\Prototype {
 	////////////////////////////////////////////////////////////////
 
 	public function
-	Send(?int $Via=NULL):
+	Send(?string $Via=NULL):
 	void {
 
 		$Via ??= $this->Via;
@@ -217,10 +230,49 @@ extends Common\Prototype {
 				Mailjet\Resources::$Email,
 				[ 'body' => $Body ]
 			);
+
+			if($this->Log) {
+				if($Result->Success())
+				$this->Log->Write(
+					"EMAIL-SEND-OK: Mailjet",
+					[
+						'Success' => 1,
+						'Reason'  => NULL,
+						'From'    => $Message['From']['Email'],
+						'To'      => join(',', array_map( fn($Item)=> $Item['Email'], $Message['To'] )),
+						'BCC'     => join(',', array_map( fn($Item)=> $Item['Email'], $Message['BCC'] )),
+						'Subject' => $Message['Subject']
+					]
+				);
+
+				else
+				$this->Log->Write(
+					"EMAIL-SEND-ERROR: mailjet",
+					[
+						'Success' => 0,
+						'Reason'  => $Result->GetBody(),
+						'From'    => $Message['From']['Email'],
+						'To'      => join(',', array_map( fn($Item)=> $Item['Email'], $Message['To'] )),
+						'BCC'     => join(',', array_map( fn($Item)=> $Item['Email'], $Message['BCC'] )),
+						'Subject' => $Message['Subject']
+					]
+				);
+			}
 		}
 
 		catch(Exception $Error) {
-			//var_dump($Error);
+			if($this->Log)
+			$this->Log->Write(
+				"EMAIL-SEND-ERROR: mailjet",
+				[
+					'Success'   => 0,
+					'Reason'    => sprintf('Exception(%d) %s', $Error->GetCode(), $Error->GetMessage()),
+					'From'      => $Message['From']['Email'],
+					'To'        => join(',', array_map( fn($Item)=> $Item['Email'], $Message['To'] )),
+					'BCC'       => join(',', array_map( fn($Item)=> $Item['Email'], $Message['BCC'] )),
+					'Subject'   => $Message['Subject']
+				]
+			);
 		}
 
 		return;
@@ -284,11 +336,11 @@ extends Common\Prototype {
 	////////////////////////////////////////////////////////////////
 
 	static public function
-	GetViaName(int $Via):
-	string {
+	GetViaName(?string $Via):
+	?string {
 
 		if(!array_key_exists($Via, static::ViaNames))
-		throw new Exception('Invalid Outbound Via');
+		return NULL;
 
 		return static::ViaNames[$Via];
 	}
