@@ -90,7 +90,7 @@ extends Common\Prototype {
 	////////////////////////////////////////////////////////////////
 
 	public function
-	Render(string $Area='email/outbound', array $Scope=[]):
+	Render(string $Area='email/contact-form', array $Scope=[]):
 	string {
 
 		$Generator = new Surface\Engine(
