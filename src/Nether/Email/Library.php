@@ -70,6 +70,8 @@ extends Nether\Common\Library {
 
 		// add some routes to the system.
 
+		return;
+
 		if($App->Router->GetSource() === 'dirscan') {
 			$RouterPath = dirname(__FILE__);
 			$Scanner = new Nether\Avenue\RouteScanner("{$RouterPath}/Routes");
