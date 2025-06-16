@@ -28,7 +28,8 @@ extends Nether\Common\Library {
 	ConfServerUsername    = 'Nether.Email.SMTP.Username',
 	ConfServerPassword    = 'Nether.Email.SMTP.Password',
 	ConfLogName           = 'Nether.Email.LogName',
-	ConfLogFile           = 'Nether.Email.LogFile';
+	ConfLogFile           = 'Nether.Email.LogFile',
+	ConfSubjectEndpoints  = 'Nether.Email.Outbound.SubjectEndpoints';
 
 	////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////
